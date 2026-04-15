@@ -41,7 +41,7 @@ function App() {
   const [locked, setLocked]                 = useState(false);
 
   // ⏱️ Timer
-  const [timeLeft, setTimeLeft]       = useState(40);
+  const [timeLeft, setTimeLeft]       = useState(35);
   const [timerActive, setTimerActive] = useState(false);
 
   // 🎛️ Category filter
@@ -70,7 +70,7 @@ function App() {
     setSelected("");
     setResult("");
     setLocked(false);
-    setTimeLeft(40);
+    setTimeLeft(35);
     setTimerActive(true);
   };
 
