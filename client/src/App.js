@@ -110,7 +110,7 @@ function App() {
 
   return (
     <div style={{ maxWidth: "700px", margin: "0 auto", padding: "20px", fontFamily: "sans-serif" }}>
-      <h1 style={{ textAlign: "center" }}>🏆 Battle of the Books</h1>
+      <h1 style={{ textAlign: "center" }}>🏆 Huntrix Hearts - Battle of the Books</h1>
 
       {/* ── Stats bar ── */}
       <div style={{
