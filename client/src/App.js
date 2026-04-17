@@ -7,15 +7,7 @@ function shuffle(array) {
   return [...array].sort(() => Math.random() - 0.5);
 }
 
-const ALL_BOOK_TITLES = [...new Set(questionsData.map((q) => q.answer))];
-
-const CATEGORIES = [
-  "All",
-  "Direct Quotes",
-  "Events and Plot Details",
-  "Passages from the Text",
-  "Book Design and Illustrations",
-];
+const ALL_BOOK_TITLES = [...new Set(questionsData.map((q) => q.answer))].sort();
 
 const CATEGORY_COLORS = {
   "Direct Quotes": "#9c27b0",
@@ -23,6 +15,18 @@ const CATEGORY_COLORS = {
   "Passages from the Text": "#b8640a",
   "Book Design and Illustrations": "#c62a6b",
 };
+
+const BOOK_COLORS = [
+  "#1565c0",
+  "#2e7d32",
+  "#6a1b9a",
+  "#b8640a",
+  "#c62a6b",
+  "#0f6e56",
+  "#ad1457",
+  "#00695c",
+  "#4527a0",
+];
 
 // ── component ─────────────────────────────────────────────────────────────────
 
@@ -41,11 +45,11 @@ function App() {
   const [locked, setLocked]                 = useState(false);
 
   // ⏱️ Timer
-  const [timeLeft, setTimeLeft]       = useState(35);
+  const [timeLeft, setTimeLeft]       = useState(40);
   const [timerActive, setTimerActive] = useState(false);
 
-  // 🎛️ Category filter
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  // 🎛️ Book filter
+  const [selectedBook, setSelectedBook] = useState("All");
 
   // ── load a question ───────────────────────────────────────────────────────
 
@@ -53,8 +57,8 @@ function App() {
     setQuestionNumber((p) => (isFirst ? 1 : p + 1));
 
     const pool =
-      selectedCategory !== "All"
-        ? questionsData.filter((q) => q.category === selectedCategory)
+      selectedBook !== "All"
+        ? questionsData.filter((q) => q.answer === selectedBook)
         : questionsData;
 
     const activePool = pool.length > 0 ? pool : questionsData;
@@ -70,7 +74,7 @@ function App() {
     setSelected("");
     setResult("");
     setLocked(false);
-    setTimeLeft(35);
+    setTimeLeft(40);
     setTimerActive(true);
   };
 
@@ -110,7 +114,7 @@ function App() {
 
   return (
     <div style={{ maxWidth: "700px", margin: "0 auto", padding: "20px", fontFamily: "sans-serif" }}>
-      <h1 style={{ textAlign: "center" }}>🏆 Huntrix Hearts - Battle of the Books</h1>
+      <h1 style={{ textAlign: "center" }}>🏆 Battle of the Books</h1>
 
       {/* ── Stats bar ── */}
       <div style={{
@@ -124,27 +128,69 @@ function App() {
         📚 {ALL_BOOK_TITLES.length} books · {questionsData.length} questions loaded
       </div>
 
-      {/* ── Category filter ── */}
+      {/* ── Book filter buttons ── */}
       <div style={{ marginBottom: "20px" }}>
-        <strong>Filter by category: </strong>
-        {CATEGORIES.map((cat) => (
+        <strong style={{ display: "block", marginBottom: "10px", fontSize: "15px" }}>
+          📖 Pick a book to study:
+        </strong>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+          {/* All Books button */}
           <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
+            onClick={() => setSelectedBook("All")}
             style={{
-              margin: "4px",
-              padding: "6px 12px",
-              borderRadius: "20px",
-              border: "1px solid #ccc",
-              background: selectedCategory === cat ? "#333" : "#fff",
-              color: selectedCategory === cat ? "#fff" : "#333",
+              padding: "10px 18px",
+              borderRadius: "24px",
+              border: selectedBook === "All" ? "3px solid #333" : "2px solid #999",
+              background: selectedBook === "All" ? "#333" : "#fff",
+              color: selectedBook === "All" ? "#fff" : "#333",
               cursor: "pointer",
-              fontSize: "13px",
+              fontSize: "14px",
+              fontWeight: "bold",
+              boxShadow: selectedBook === "All" ? "0 3px 8px rgba(0,0,0,0.25)" : "none",
+              transition: "all 0.15s",
             }}
           >
-            {cat}
+            🌟 All Books
           </button>
-        ))}
+
+          {/* One button per book */}
+          {ALL_BOOK_TITLES.map((title, i) => {
+            const color    = BOOK_COLORS[i % BOOK_COLORS.length];
+            const isActive = selectedBook === title;
+            const shortTitle = title.split(" By ")[0];
+            return (
+              <button
+                key={title}
+                onClick={() => setSelectedBook(title)}
+                style={{
+                  padding: "10px 18px",
+                  borderRadius: "24px",
+                  border: isActive ? `3px solid ${color}` : "2px solid #ccc",
+                  background: isActive ? color : "#fff",
+                  color: isActive ? "#fff" : "#444",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  boxShadow: isActive ? "0 3px 8px rgba(0,0,0,0.25)" : "none",
+                  transition: "all 0.15s",
+                }}
+              >
+                📘 {shortTitle}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Selected book info */}
+        {selectedBook !== "All" && (
+          <div style={{
+            marginTop: "10px",
+            fontSize: "13px",
+            color: "#555",
+          }}>
+            Showing <strong>{questionsData.filter((q) => q.answer === selectedBook).length}</strong> questions for <strong>{selectedBook.split(" By ")[0]}</strong>
+          </div>
+        )}
       </div>
 
       <hr />
